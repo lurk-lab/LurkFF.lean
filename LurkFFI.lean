@@ -1,0 +1,1 @@
+@[extern "lean_poseidon_hash_arity_4"] opaque blah : (a b c d : ByteArray) → ByteArray 

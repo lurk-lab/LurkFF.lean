@@ -2,7 +2,10 @@ import Lake
 open Lake DSL
 
 package lurkFF where
+  precompileModules := true
   moreLinkArgs := #["-llurkff", "-L", "./target/release"] 
+
+lean_lib LurkFFI
 
 @[default_target]
 lean_exe lurkff where
