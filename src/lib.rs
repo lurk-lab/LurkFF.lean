@@ -1,9 +1,9 @@
 use neptune::poseidon::{Poseidon, PoseidonConstants};
 use blstrs::Scalar as Fr;
-use ff::{Field, PrimeField};
+use ff::{PrimeField};
 use generic_array::typenum;
 
-pub(crate) fn scalar_from_u64s(parts: &[u64; 4]) -> Fr {
+fn scalar_from_u64s(parts: &[u64; 4]) -> Fr {
     let mut le_bytes = [0u8; 32];
     le_bytes[0..8].copy_from_slice(&parts[0].to_le_bytes());
     le_bytes[8..16].copy_from_slice(&parts[1].to_le_bytes());
@@ -15,7 +15,7 @@ pub(crate) fn scalar_from_u64s(parts: &[u64; 4]) -> Fr {
 }
 
 #[no_mangle]
-extern "C" fn hash_arity_4<'a>(part1: &'a [u64; 4], part2: &'a [u64; 4], part3: &'a [u64; 4], part4: &'a [u64; 4]) -> &'a [u8; 32] {
+extern "C" fn hash_arity_4(fr_hash: &mut [u8; 32], part1: &[u64; 4], part2: &[u64; 4], part3: &[u64; 4], part4: &[u64; 4]) {
     let fr1 = scalar_from_u64s(part1);
     let fr2 = scalar_from_u64s(part2);
     let fr3 = scalar_from_u64s(part3);
@@ -25,16 +25,17 @@ extern "C" fn hash_arity_4<'a>(part1: &'a [u64; 4], part2: &'a [u64; 4], part3: 
 
     let mut h = Poseidon::<Fr, typenum::U4>::new_with_preimage(&preimage, &constants);
 
-    let fr_hash = h.hash();
-    
-    &fr_hash.to_bytes_le()
+    *fr_hash = h.hash()
+                .to_bytes_le();
 }
-
+#[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn works() {
-        assert_eq!(hash_arity_4([0,0,0,1], [0,0,0,2], [0,0,0,3], [0,0,0,4]), [0;32])
+        let mut trash = [0;32];
+        hash_arity_4(&mut trash, &[0,0,0,0], &[0,0,0,0], &[0,0,0,0], &[0,0,0,0]);
+        assert_eq!(trash, [0;32])
     }
 }
