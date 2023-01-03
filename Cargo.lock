@@ -453,6 +453,9 @@ dependencies = [
 name = "lurkff"
 version = "0.1.0"
 dependencies = [
+ "blstrs",
+ "ff",
+ "generic-array",
  "neptune",
 ]
 
