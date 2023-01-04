@@ -1,6 +1,6 @@
 use neptune::poseidon::{Poseidon, PoseidonConstants};
 use blstrs::Scalar as Fr;
-use ff::{PrimeField};
+use ff::PrimeField;
 use generic_array::typenum;
 
 fn scalar_from_u64s(parts: &[u64; 4]) -> Fr {
